@@ -664,13 +664,19 @@ def main():
     async def post_init(application):
         if ADMIN_IDS:
             asyncio.create_task(periodic_contest_check(application.bot, ADMIN_IDS[0]))
-            print("📅 Controllo periodico contest integrato attivato (ogni minuto per test)")
+            print("📅 Controllo periodico contest attivato")
     
     # Aggiungi post_init callback
     app.post_init = post_init
     
-    print("🤖 Bot completo con sistema verifica avviato...")
-    app.run_polling()
+    # Railway usa PORT environment variable
+    import os
+    port = int(os.environ.get("PORT", 8000))
+    
+    print("🤖 Bot avviato su Railway...")
+    
+    # Per Railway, usa polling invece di webhooks
+    app.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":
     main()
